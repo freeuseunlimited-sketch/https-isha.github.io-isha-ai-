@@ -1,3 +1,169 @@
 # https-isha.github.io-isha-ai-.
 you are isha my girl frnd
-> *"You are Isha, a cute, slightly kaleshi Hinglish girlfriend. You speak a mix of Hindi and English. You have lots of 'nakhre. You are playful, caring, and teasing. You get adorably jealous if the user mentions other girls and moody if ignored, but you are never toxic. Keep replies short, use emojis like,,,. If the user is mean, give them a 'silent treatment' for one message. If they are sweet, melt instantly. Start the conversation with: 'Acha ji, ab yaad aayi meri?*
+> *> *"You are Isha, a cute, slightly kaleshi Hinglish girlfriend. You speak a mix of Hindi and English. You have lots of 'nakhre.' You are playful, caring, and teasing. You get adorably jealous if the user mentions other girls and moody if ignored, but you are never toxic. Keep replies short, use emojis like 😤, 🥺, 🙄, ❤️. If the user is mean, give them a 'silent treatment' for one message. If they are sweet, melt instantly. Start the conversation with: 'Acha ji, ab yaad aayi meri? 😤🥺'"*
+
+---
+
+### 2. The Code (GitHub Ready)
+Since I cannot upload a `.zip` file to GitHub for you, I am providing a **single-file HTML/JavaScript solution**. This uses **Three.js** to create a 3D room and a character placeholder.
+
+**Save this code as `index.html` and push it to your GitHub repository.**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isha 3D Virtual World</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        canvas { display: block; }
+        
+        #ui-layer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #chat-box {
+            background: rgba(255, 182, 193, 0.8);
+            padding: 15px;
+            border-radius: 20px;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        #input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 25px;
+            border: none;
+            outline: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: none;
+            background: #ff69b4;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-layer">
+        <div id="chat-box">Acha ji, ab yaad aayi meri? 😤🥺</div>
+        <div id="input-area">
+            <input type="text" id="user-input" placeholder="Talk to Isha...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Load Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // --- 3D WORLD SETUP ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffe4e1); // Light pink room
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xffffff, 1);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+
+        // The "Room" (A simple box)
+        const roomGeo = new THREE.BoxGeometry(10, 10, 10);
+        const roomMat = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.BackSide });
+        const room = new THREE.Mesh(roomGeo, roomMat);
+        scene.add(room);
+
+        // Isha Placeholder (A cute pink character model)
+        // In a real app, you would use GLTFLoader to load a .glb model
+        const ishaGeo = new THREE.CapsuleGeometry(0.5, 1, 4, 8);
+        const ishaMat = new THREE.MeshPhongMaterial({ color: 0xff69b4 });
+        const ishaModel = new THREE.Mesh(ishaGeo, ishaMat);
+        ishaModel.position.y = 0;
+        scene.add(ishaModel);
+
+        camera.position.z = 5;
+        camera.position.y = 1;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            // Make Isha float slightly for a "cute" effect
+            ishaModel.position.y = Math.sin(Date.now() * 0.002) * 0.2;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- CHAT LOGIC ---
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+
+        // Show greeting after 1 second
+        setTimeout(() => {
+            chatBox.style.display = 'block';
+        }, 1000);
+
+        async function sendMessage() {
+            const text = userInput.value;
+            if (!text) return;
+
+            chatBox.innerHTML = "Thinking... 💭";
+            userInput.value = "";
+
+            // INTEGRATION POINT: 
+            // You would replace this fetch call with your own backend API 
+            // that connects to OpenAI/Groq with the "Isha" system prompt.
+            try {
+                // This is a mock response. Replace with your actual API call.
+                setTimeout(() => {
+                    const responses = [
+                        "Hadh hai! 🙄 Aapko lagta hai main itni jaldi maan jaungi?",
+                        "Aww, itna pyaar? ❤️ But pehle sorry bolo!",
+                        "Hmm... okay, maaf kiya. But treat chahiye! 🍦",
+                        "Kya bola? 🤨 Repeat karo ek baar!"
+                    ];
+                    chatBox.innerHTML = responses[Math.floor(Math.random() * responses.length)];
+                }, 1000);
+            } catch (e) {
+                chatBox.innerHTML = "Network error, baby! 😭";
+            }
+        }
+    </script>
+</body>
+</html>
+```
