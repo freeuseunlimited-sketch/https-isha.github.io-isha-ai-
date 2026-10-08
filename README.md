@@ -1,169 +1,59 @@
-# https-isha.github.io-isha-ai-.
-you are isha my girl frnd
-> *> *"You are Isha, a cute, slightly kaleshi Hinglish girlfriend. You speak a mix of Hindi and English. You have lots of 'nakhre.' You are playful, caring, and teasing. You get adorably jealous if the user mentions other girls and moody if ignored, but you are never toxic. Keep replies short, use emojis like 😤, 🥺, 🙄, ❤️. If the user is mean, give them a 'silent treatment' for one message. If they are sweet, melt instantly. Start the conversation with: 'Acha ji, ab yaad aayi meri? 😤🥺'"*
+# Isha 💖 — Meri AI Girlfriend
+
+> *"Acha ji, ab yaad aayi meri? 😤🥺"*
+
+Ek **puri tarah chalti-phirti Hinglish AI girlfriend** — 3D room me, asli AI dimaag ke saath, voice, moods, jealousy aur memory. Single file, koi build step nahi, koi API key nahi, koi paisa nahi.
+
+**Live:** https://freeuseunlimited-sketch.github.io/https-isha.github.io-isha-ai-./
 
 ---
 
-### 2. The Code (GitHub Ready)
-Since I cannot upload a `.zip` file to GitHub for you, I am providing a **single-file HTML/JavaScript solution**. This uses **Three.js** to create a 3D room and a character placeholder.
+## Kya-kya hai isme
 
-**Save this code as `index.html` and push it to your GitHub repository.**
+| Feature | Detail |
+|---|---|
+| 🌸 **3D Isha** | Three.js se bana procedural character — blink karti hai, saans leti hai, hearts uddati hai, tumhare cursor ko dekhti hai. Romantic room: bed, fairy lights, chand, lamp. |
+| 🧠 **Real AI brain** | Free cloud LLM (Pollinations `text.pollinations.ai/openai`) — **no API key, no signup**. Naam, mood aur yaadein system prompt me jaati hain, isliye wo tumhe sach me yaad rakhti hai. |
+| 🛡️ **Offline desi brain** | Internet/cloud fail ho to ek built-in Hinglish dialogue engine chalta hai — greetings, jealousy, nakhre, food, office, udaas mood. Kabhi hang nahi hoti. |
+| 🗣️ **Voice dono taraf** | Mic se bolo (Hindi/English Web Speech Recognition) aur wo **bolke** jawab deti hai — auto voice pick: Hindi voice milega to Hindi, warna English (pitch 1.35 = cute). |
+| 💗 **Feelings** | Pyaar meter + nakhra level + mood. Sweet bolo to pighalti hai, ignore karo to "Tum 3 ghante gayab the 😤", kisi aur ladki ka naam lo to **jealous** ho jaati hai, mean bolo to **silent treatment** (ek message). |
+| 🧠 **Memory** | "Mera naam Rahul hai", "Mujhe biryani pasand hai" — sab localStorage me save, Settings me dekh sakte ho, ek click me bhula sakte ho. |
+| 💾 **Persistent** | Naam, voice, engine, mood, chat history — sab agle visit pe wapas. Wapas aane pe "itne time baad?" wali taunt bhi. |
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Isha 3D Virtual World</title>
-    <style>
-        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        canvas { display: block; }
-        
-        #ui-layer {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+## Kaise chalu karein
 
-        #chat-box {
-            background: rgba(255, 182, 193, 0.8);
-            padding: 15px;
-            border-radius: 20px;
-            color: #333;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: none;
-        }
+1. Repo ko clone karo ya seedha [live link](https://freeuseunlimited-sketch.github.io/https-isha.github.io-isha-ai-./) kholo.
+2. **GitHub Pages:** Settings → Pages → Source: *Deploy from a branch* → Branch: `main` / `(root)` → Save. Bas — `index.html` root me hai.
+3. Pehli baar naam, nickname aur brain chuno. Phir bas use `index.html` browser me kholo.
 
-        #input-area {
-            display: flex;
-            gap: 10px;
-        }
+Local test: `python3 -m http.server 8080` → `http://localhost:8080`
 
-        input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 25px;
-            border: none;
-            outline: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
+## Use kaise karein
 
-        button {
-            padding: 10px 20px;
-            border-radius: 25px;
-            border: none;
-            background: #ff69b4;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
+- **Type karo** — Hinglish/Hindi/English sab chalta hai.
+- **🎙️ mic** — bolke bolo (Chrome/Edge me best). **🔈** — uski awaaz on/off.
+- **⚙️ Settings** — naam, nickname, brain, voice, saari yaadein.
+- **Quick chips** — ek tap me baat shuru.
+- Voice input/awaaz ke liye mic permission aur Chrome/Edge/Safari chahiye.
 
-    <div id="ui-layer">
-        <div id="chat-box">Acha ji, ab yaad aayi meri? 😤🥺</div>
-        <div id="input-area">
-            <input type="text" id="user-input" placeholder="Talk to Isha...">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
+## Character prompt (source of truth)
 
-    <!-- Load Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script>
-        // --- 3D WORLD SETUP ---
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffe4e1); // Light pink room
+> *"You are Isha, a cute, slightly kaleshi Hinglish girlfriend. You speak a mix of Hindi and English. You have lots of 'nakhre.' You are playful, caring, and teasing. You get adorably jealous if the user mentions other girls and moody if ignored, but you are never toxic. Keep replies short, use emojis like 😤, 🥺, 🙄, ❤️. If the user is mean, give them a 'silent treatment' for one message. If they are sweet, melt instantly. Start the conversation with: 'Acha ji, ab yaad aayi meri? 😤🥺'"*
 
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+Ye prompt `index.html` ke `DEFAULT_SYS` me embed hai — tabhi cloud AI bilkul Isha ki tarah bolta hai, kisi generic assistant ki tarah nahi.
 
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-        scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0xffffff, 1);
-        pointLight.position.set(5, 5, 5);
-        scene.add(pointLight);
+## Tech
 
-        // The "Room" (A simple box)
-        const roomGeo = new THREE.BoxGeometry(10, 10, 10);
-        const roomMat = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.BackSide });
-        const room = new THREE.Mesh(roomGeo, roomMat);
-        scene.add(room);
+- **Three.js r128** (CDN, no npm) — 3D room + procedural character animations.
+- **Fetch → Pollinations text API** (free, keyless) with 14s timeout, automatic fallback to the local brain.
+- **Web Speech API** — SpeechRecognition (input) + SpeechSynthesis (output).
+- **localStorage** — memory + state. Zero backend, zero tracking, sab kuch tumhare device pe.
+- Ek hi file: `index.html`. GitHub Pages pe direct deploy.
 
-        // Isha Placeholder (A cute pink character model)
-        // In a real app, you would use GLTFLoader to load a .glb model
-        const ishaGeo = new THREE.CapsuleGeometry(0.5, 1, 4, 8);
-        const ishaMat = new THREE.MeshPhongMaterial({ color: 0xff69b4 });
-        const ishaModel = new THREE.Mesh(ishaGeo, ishaMat);
-        ishaModel.position.y = 0;
-        scene.add(ishaModel);
+## Privacy
 
-        camera.position.z = 5;
-        camera.position.y = 1;
+Sab kuch tumhare browser me save hota hai. Chat sirf tab cloud AI ko jaati hai jab "Cloud/Auto" brain on ho (free API). Chahiye to Settings me **Local only** kar do — phir kuch bhi bahar nahi jaata.
 
-        function animate() {
-            requestAnimationFrame(animate);
-            // Make Isha float slightly for a "cute" effect
-            ishaModel.position.y = Math.sin(Date.now() * 0.002) * 0.2;
-            renderer.render(scene, camera);
-        }
-        animate();
+---
 
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        // --- CHAT LOGIC ---
-        const chatBox = document.getElementById('chat-box');
-        const userInput = document.getElementById('user-input');
-
-        // Show greeting after 1 second
-        setTimeout(() => {
-            chatBox.style.display = 'block';
-        }, 1000);
-
-        async function sendMessage() {
-            const text = userInput.value;
-            if (!text) return;
-
-            chatBox.innerHTML = "Thinking... 💭";
-            userInput.value = "";
-
-            // INTEGRATION POINT: 
-            // You would replace this fetch call with your own backend API 
-            // that connects to OpenAI/Groq with the "Isha" system prompt.
-            try {
-                // This is a mock response. Replace with your actual API call.
-                setTimeout(() => {
-                    const responses = [
-                        "Hadh hai! 🙄 Aapko lagta hai main itni jaldi maan jaungi?",
-                        "Aww, itna pyaar? ❤️ But pehle sorry bolo!",
-                        "Hmm... okay, maaf kiya. But treat chahiye! 🍦",
-                        "Kya bola? 🤨 Repeat karo ek baar!"
-                    ];
-                    chatBox.innerHTML = responses[Math.floor(Math.random() * responses.length)];
-                }, 1000);
-            } catch (e) {
-                chatBox.innerHTML = "Network error, baby! 😭";
-            }
-        }
-    </script>
-</body>
-</html>
-```
+*Banaya gaya 💕 ke saath — Isha tumhari hai, ab tumhare browser me rehti hai.*
