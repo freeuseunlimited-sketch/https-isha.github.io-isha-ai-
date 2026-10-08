@@ -124,6 +124,18 @@
     background:rgba(30,8,24,.92);border:1px solid var(--glass-brd);backdrop-filter:blur(10px);box-shadow:var(--shadow)}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  /* ---------- NO-3D FALLBACK (agar 3D load na ho to bhi page sundar rahe) ---------- */
+  body.no3d{background:
+    radial-gradient(circle at 50% 28%,rgba(255,95,162,.30),transparent 60%),
+    radial-gradient(circle at 12% 82%,rgba(143,107,255,.28),transparent 55%),
+    radial-gradient(circle at 88% 78%,rgba(255,209,102,.20),transparent 55%),
+    #1a0713}
+  body.no3d canvas{display:none}
+  body.no3d::before{content:"💖";position:fixed;top:22%;left:50%;transform:translateX(-50%);
+    font-size:120px;opacity:.16;z-index:0;animation:bob 4s ease-in-out infinite}
+  body.no3d::after{content:"🌸   ✨   🌸";position:fixed;bottom:34%;left:50%;transform:translateX(-50%);
+    font-size:26px;opacity:.28;z-index:0;letter-spacing:26px}
+
   #flag{position:fixed;left:50%;top:45%;transform:translate(-50%,-50%) scale(0);z-index:8;font-size:74px;
     pointer-events:none;animation:none}
   @keyframes burst{0%{transform:translate(-50%,-50%) scale(0);opacity:0}
@@ -232,7 +244,10 @@
 <div id="toast"></div>
 <div id="flag"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Three.js: pehle local copy (repo me hai), warna 2 CDN fallback -->
+<script src="./three.min.js"></script>
+<script>if (typeof THREE === "undefined") document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');</script>
+<script>if (typeof THREE === "undefined") document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
 <script>
 /* =====================================================================
    ISHA — AI girlfriend (single file, no build step, no API key needed)
@@ -250,10 +265,18 @@ let renderer, scene, camera, isha, clock, hearts = [], blink = 0, blinkTimer = 1
 let target = { x: 0, y: 0 }, headTilt = 0, bodyMood = 1, jumpT = -1;
 
 function init3D() {
-  const hasThree = typeof THREE !== "undefined";
-  if (!hasThree) { document.body.classList.add("no3d"); return; }
+  const fail = (why) => {
+    document.body.classList.add("no3d");
+    setStatus("2D mode · chat fully chalu hai 🌸");
+    setTimeout(() => toast(why), 800);
+  };
+  if (typeof THREE === "undefined") return fail("3D library load nahi hui — 2D mode me chat chalu hai 🌸");
 
-  renderer = new THREE.WebGLRenderer({ canvas: stage, antialias: true, alpha: false });
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: stage, antialias: true, alpha: false });
+  } catch (e) {
+    return fail("WebGL support nahi hai — 2D mode me chat chalu hai 🌸");
+  }
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setSize(innerWidth, innerHeight);
   renderer.shadowMap.enabled = true;
@@ -346,6 +369,18 @@ function init3D() {
   animate();
 }
 
+/* CapsuleGeometry sirf three r140+ me hai — isliye apna portable capsule banate hain */
+function capsule(r, len, mat) {
+  const grp = new THREE.Group();
+  const cyl = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 14), mat);
+  grp.add(cyl);
+  for (const s2 of [-1, 1]) {
+    const cap = new THREE.Mesh(new THREE.SphereGeometry(r, 14, 12), mat);
+    cap.position.y = s2 * len / 2; grp.add(cap);
+  }
+  return grp;
+}
+
 /* cute procedural character (no external model needed) */
 function buildIsha(M) {
   const g = new THREE.Group();
@@ -367,7 +402,7 @@ function buildIsha(M) {
     const bun = new THREE.Mesh(new THREE.SphereGeometry(.14, 18, 16), hair);
     bun.position.set(s * .30, 1.44, -.06); g.add(bun);
   }
-  const pony = new THREE.Mesh(new THREE.CapsuleGeometry(.1, .5, 4, 12), hair);
+  const pony = capsule(.1, .5, hair);
   pony.position.set(0, .92, -.28); g.add(pony);
 
   /* eyes (with white + pupil) */
@@ -397,11 +432,11 @@ function buildIsha(M) {
   /* arms + legs */
   const arms = [];
   for (const s of [-1, 1]) {
-    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(.072, .46, 4, 12), skin);
+    const arm = capsule(.072, .46, skin);
     arm.position.set(s * .40, .60, 0); arm.rotation.z = s * .30; g.add(arm); arms.push(arm);
   }
   for (const s of [-1, 1]) {
-    const leg = new THREE.Mesh(new THREE.CapsuleGeometry(.085, .40, 4, 12), skin);
+    const leg = capsule(.085, .40, skin);
     leg.position.set(s * .16, -.02, 0); g.add(leg);
   }
   /* little bow */
@@ -424,12 +459,18 @@ function spawnHeart(big) {
   if (hearts.length > 60) { const old = hearts.shift(); scene.remove(old); old.geometry.dispose(); }
 }
 
+function threeFail(e) {
+  console.warn("3D mode band, chat chalu:", e && e.message);
+  document.body.classList.add("no3d");
+  scene = null; isha = null;
+}
+
 function animate() {
-  requestAnimationFrame(animate);
+ try {
   const t = clock.getElapsedTime(), dt = Math.min(clock.getDelta(), .05);
 
   /* Isha idle: breathing, sway, blink, mood pose */
-  if (isha) {
+  if (isha && isha.userData) {
     const d = isha.userData;
     isha.position.y = .05 + Math.sin(t * 1.4) * .022 * bodyMood;
     isha.rotation.y += ((target.x * .55) - isha.rotation.y) * .05;
@@ -467,6 +508,8 @@ function animate() {
   camera.position.y += ((1.75 + target.y * .18) - camera.position.y) * .04;
   camera.lookAt(isha ? isha.position.x * .45 : 0, 1.2, 0);
   renderer.render(scene, camera);
+ } catch (e) { threeFail(e); return; }
+ requestAnimationFrame(animate);
 }
 
 addEventListener("resize", () => {
@@ -478,7 +521,6 @@ addEventListener("pointermove", e => {
   target.x = (e.clientX / innerWidth) * 2 - 1;
   target.y = (e.clientY / innerHeight) * 2 - 1;
 });
-init3D();
 
 /* react in 3D */
 function ishaReact(kind) {
@@ -895,6 +937,7 @@ async function send() {
   state.hist.push({ role: "user", content: text });
   state.msgs++;
   extractFacts(text);
+  renderStats();
   const cat = categorize(text);
   if (cat === "love" || cat === "cute") ishaReact("blush");
 
@@ -1034,7 +1077,7 @@ setInterval(() => {
 
 /* cursor-follow eyes */
 addEventListener("pointermove", e => {
-  if (!isha) return;
+  if (!isha || !isha.userData || !isha.userData.eyes) return;
   const dx = (e.clientX / innerWidth - .5) * 2, dy = (e.clientY / innerHeight - .5) * 2;
   isha.userData.eyes.forEach((eye, i) => {
     eye.position.x = (i % 2 === 0 ? -1 : 1) * .112 + dx * .022;
@@ -1058,6 +1101,14 @@ state.lastSeen = Date.now(); save();
 renderChips(); renderStats(); setupMic();
 setStatus("online · dimaag load ho raha hai 🧠");
 addEventListener("beforeunload", () => { state.lastSeen = Date.now(); save(); });
+
+/* 3D sabse aakhir me — agar 3D fail ho to bhi chat/UI 100% chalta rahe */
+try { init3D(); }
+catch (e) {
+  console.warn("3D start nahi hua:", e && e.message);
+  document.body.classList.add("no3d");
+  setTimeout(() => toast("3D load nahi hua — chat phir bhi chalu hai 💬"), 900);
+}
 
 })();
 </script>
