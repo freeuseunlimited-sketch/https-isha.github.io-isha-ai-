@@ -21,6 +21,7 @@ const TYPES = {
 };
 
 const server = http.createServer((req, res) => {
+  console.log(`[req] ${req.method} ${req.url} | Host: ${req.headers.host} | UA: ${(req.headers["user-agent"]||"-").slice(0,60)} | XF: ${req.headers["x-forwarded-host"]||"-"}`);
   let urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
   if (urlPath === "/" || urlPath === "") urlPath = "/index.html";
   const filePath = path.join(ROOT, path.normalize(urlPath).replace(/^(\.\.[/\\])+/, ""));
